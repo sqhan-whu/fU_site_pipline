@@ -1,3 +1,11 @@
+# name	GSE_number	samples
+# GDIN1	GSM4998039	Cal62_input1
+# GDIN2	GSM4998040	Cal62_input2
+# GD172	GSM4998041	Cal62_output_nonmismatch1
+# GD188	GSM4998042	Cal62_output_nonmismatch2
+# GD272	GSM4998043	Cal62_output_mismatch1
+# GD288	GSM4998044	Cal62_output_mismatch2
+
 # 1. macs2 call peaks：
 #!/bin/bash
 #SBATCH -N 1 -c 16
