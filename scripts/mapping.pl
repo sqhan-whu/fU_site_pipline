@@ -1,0 +1,22 @@
+#!/usr/bin/perl
+use FindBin qw($Bin);
+use Cwd qw(abs_path);
+$fq1=shift;
+$fq2=shift;
+$dirname=shift;
+@out=split /\//,$fq1;
+@out2=split /\//,$fq2;
+@name=split /\_/,$out[-1];
+@name2=split /\_/,$out2[-1];
+@trim_name=split /\./,$out[-1];
+@trim_name2= split /\./,$out2[-1];
+$dir=abs_path($dirname);
+`mkdir -p $dir/$name[0]/Shell`;
+open F, ">$dir/$name[0]/Shell/$name[0]\_filter.sh";
+print F "#!/bin/bash\n#SBATCH -N 1 -c 16\n";
+print F "trim_galore --quality 20 --phred33 --stringency 3 --length 30 -o $dir/$name[0] --paired $fq1 $fq2\n";
+print F "bowtie2 -p 16 -L 20 -N 1 -x /home/yangwei/project/00.DATABASE/hg38/bowtie2_index/hg38 -1 $dir/$name[0]/$trim_name[0]\_val_1.fq.gz -2 $dir/$name[0]/$trim_name2[0]\_val_2.fq.gz -S $dir/$name[0]/$name[0].sam 2>$dir/$name[0]/$name[0].mapping_rate.txt\n";
+print F "samtools view -@ 16 -f 3 -F 4 -F 8 -q 1 -Su $dir/$name[0]/$name[0].sam | samtools sort -@ 6 -m 1000M -o $dir/$name[0]/$name[0].sorted.bam -T $dir/$name[0]/$name[0].tmp\n";
+print F "samtools index $dir/$name[0]/$name[0].sorted.bam\n";
+print F "rm $dir/$name[0]/$name[0].sam $dir/$name[0]/$name[0]*.fq\n";
+close F;
